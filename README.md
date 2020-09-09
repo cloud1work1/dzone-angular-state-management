@@ -1,27 +1,106 @@
 # Dzonestatemant
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.22.
-
-## Development server
-
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+- ```
+  npm i @ngrx/store --save
+  ```
+ - ## Customer Interface
+  - ```
+    export interface Customer {
+    name: string = '';
+    }
+    ```
+- ## CustomerAction
+  - ```
+    import {Action} from '@ngrx/store';
+    ```
+  - ```
+    export enum CustomerActionTypes {
+      Add = '[Customer Component] Add',
+      Remove = '[Customer Component] Remove'
+    }
+    ```
+  - ```
+    export class ActionEx implements Action {
+    readonly type;
+    payload: any;
+    }
+    ```
+  - ```
+    export class AddCustomer implements ActionEx {
+     readonly type = CustomerActionTypes.Add;
+     constructor(public payload: any){}
+    }
+    ```
+  - ```
+    export class RemoveCustomer implements ActionEx {
+     readonly type = CustomerActionTypes.Remove;
+     constructor(public payload: any){}
+    }
+    ```
+    
+- ## CustomerReducer
+  - ```
+    export const initialStates = [];
+    ```
+  - ```
+    export function CustomerReducer(state=initialStates, action: ActionEx) {
+      switch(action.name) {
+        case CustomerActionTypes.Add:
+        return [...state, action.payload];
+        case CustomerActionTypes.Remove:
+        return [
+           ...state.slice(0, action.payload),
+           ...state.slice(action.payload+1)
+        ];
+        default:
+          return state;
+      }
+    
+    }
+    ```
+- ## CustomerComponent
+  - ```
+    import { Store, select} from '@ngrx/store';
+    ``` 
+  - ```
+    customers: Observable<Customer[]>;
+    ```
+  - ```
+    constructor(private store: Store<{customers: Customer[]}>{
+      this.customers = store.pipe(select('customers'));
+    }
+    ```
+  - ```
+    public addCustomer(customerName) {
+      const customer = new Customer();
+      customer.name = customerName;
+      this.store.dispatch(new AddCustomer(customer));
+    }
+    ```
+  - ```
+    public removeCustomer(index) {
+      this.store.dispatch(new RemoveCustomer(index));
+    }
+    ```
+- ## AppModule
+  - ```
+    import { StoreModule } from '@ngrx/store';
+    import { CustomerReducer} from './customer.reducer';
+    ```
+  - ```
+    import :[
+     StoreModule.forRoot({customers: CustomerReducer})
+    ]
+    ```
+- ## customer.component.html
+  - ```
+    <ul>
+      <li * ngFor="let customer of customers | async; let i = index">
+        <span>{{customer.name}}</span>
+        <button (click)="removeCustomer(i)">Remove</button>
+                   </li>
+                   </ul>
+     ```
+   - ```
+     <input #name placeholder="Enter customer name"><button (click)="addCustomer(name.value)">Add</button>
+     ```
