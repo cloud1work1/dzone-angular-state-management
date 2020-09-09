@@ -1,0 +1,19 @@
+<div class="container">
+    <div class="header">
+        <div class="title">
+            <h3>Customer List</h3>
+        </div>
+    </div>
+    <div class="content" *ngIf="customers">
+        <ul>
+            <li *ngFor="let customer of customers | async; let i=index;">
+                <span>{{customer.name}}</span>
+                <button (click)="removeCustomers(i)">X</button>
+            </li>
+        </ul>
+    </div>
+    <div class="add">
+        <input #add placeholder="Enter name of customer to add">
+        <button (click)="addCustomer(add.value)">Add</button>
+    </div>
+</div>

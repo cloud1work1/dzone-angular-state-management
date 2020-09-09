@@ -1,0 +1,21 @@
+li {
+    list-style: none;
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+}
+span {
+    background-color: cadetblue;
+    border-radius: 20px;
+    
+}
+
+li button {
+    background-color: red;
+    border-radius: 20px;
+}
+
+.container {
+    border: 1px solid #eee;
+}
